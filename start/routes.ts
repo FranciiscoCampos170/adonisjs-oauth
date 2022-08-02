@@ -45,7 +45,7 @@ Route.get('/auth',async ({view}) => {
 }).as('loginGithub')
 
 
-Route.get('github/callback', async ({ ally, auth  }) => {
+Route.get('github/callback', async ({ ally, auth, view  }) => {
   const github = ally.use('github')
 
   /**
@@ -70,7 +70,7 @@ Route.get('github/callback', async ({ ally, auth  }) => {
    * Login user using the web guard
    */
   await auth.use('web').login(user)
-  
+  return view.render('home')
 
 }).as('callback')
 
