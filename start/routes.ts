@@ -18,7 +18,7 @@
 |
 */
 
-//import User from 'App/Models/User'
+import User from 'App/Models/User'
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.get('/', async ({ view }) => {
@@ -70,6 +70,7 @@ Route.get('github/callback', async ({ ally, auth  }) => {
    * Login user using the web guard
    */
   await auth.use('web').login(user)
+  
 
 }).as('callback')
 
