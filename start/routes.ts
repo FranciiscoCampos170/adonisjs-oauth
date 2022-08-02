@@ -18,7 +18,7 @@
 |
 */
 
-
+//import User from 'App/Models/User'
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.get('/', async ({ view }) => {
@@ -29,38 +29,48 @@ Route.get('/auth',async ({view}) => {
   return view.render('auth')
  })
 
+ Route.get('/home',async ({view}) => { 
+  return view.render('home')
+ })
+
+
  Route.get('/github/redirect', async ({ ally }) => {
-  return ally.use('github').redirect()
+  return ally
+  .use('github')
+  .redirect((redirectRequest) => {
+    redirectRequest.scopes(['gist', 'user'])
+  })
+
+  
 }).as('loginGithub')
 
-Route.get('github/callback', async ({ ally }) => {
+
+Route.get('github/callback', async ({ ally, auth  }) => {
   const github = ally.use('github')
 
   /**
-   * User has explicitly denied the login request
+   * Managing error states here
    */
-  if (github.accessDenied()) {
-    return 'Access was denied'
-  }
+
+  const githubUser = await github.user()
 
   /**
-   * Unable to verify the CSRF state
+   * Find the user by email or create
+   * a new one
    */
-  if (github.stateMisMatch()) {
-    return 'Request expired. Retry again'
-  }
+  const user = await User.firstOrCreate({
+    email: githubUser.email,
+  }, {
+    name: githubUser.name,
+    accessToken: githubUser.token.token,
+    isVerified: githubUser.emailVerificationState === 'verified'
+  })
 
   /**
-   * There was an unknown error during the redirect
+   * Login user using the web guard
    */
-  if (github.hasError()) {
-    return github.getError()
-  }
+  await auth.use('web').login(user)
 
-  /**
-   * Finally, access the user
-   */
-  const user = await github.user()
 }).as('callback')
 
 

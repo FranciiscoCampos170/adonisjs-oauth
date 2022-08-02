@@ -32,7 +32,8 @@
       "@adonisjs/view",
       "@adonisjs/shield",
       "@japa/preset-adonis/build/adonis-typings",
-      "@adonisjs/ally"
+      "@adonisjs/ally",
+      "@adonisjs/lucid"
     ]
   }
 }
