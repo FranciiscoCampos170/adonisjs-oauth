@@ -45,6 +45,16 @@ Route.get('/auth',async ({view}) => {
 }).as('loginGithub')
 
 
+Route.get('/google/redirect',async ({ally}) => {
+  return ally
+  .use('google')
+  .redirect((redirectRequest) => {
+    redirectRequest.scopes(['userinfo.email'])
+  })
+}).as('loginGoogle')
+
+
+//Login With GithHub
 Route.get('github/callback', async ({ ally, auth, view  }) => {
   const github = ally.use('github')
 
@@ -74,4 +84,34 @@ Route.get('github/callback', async ({ ally, auth, view  }) => {
 
 }).as('callback')
 
+
+//Login With Google
+Route.get('google/callback', async ({ ally, auth, view  }) => {
+  const google = ally.use('google').stateless()
+
+  /**
+   * Managing error states here
+   */
+
+  const googleUser = await google.user()
+
+  /**
+   * Find the user by email or create
+   * a new one
+   */
+  const user = await User.firstOrCreate({
+    email: googleUser.email,
+  }, {
+    name: googleUser.name,
+    accessToken: googleUser.token.token,
+    isVerified: googleUser.emailVerificationState === 'verified'
+  })
+
+  /**
+   * Login user using the web guard
+   */
+  await auth.use('web').login(user)
+  return view.render('home')
+
+}).as('callback_google')
 

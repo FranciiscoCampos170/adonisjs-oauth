@@ -40,6 +40,12 @@ const allyConfig: AllyConfig = {
 		clientId: Env.get('GOOGLE_CLIENT_ID'),
 		clientSecret: Env.get('GOOGLE_CLIENT_SECRET'),
 		callbackUrl: 'http://localhost:3333/google/callback',
+		// Google specific
+		prompt: 'select_account',
+		accessType: 'offline',
+		hostedDomain: 'gmail.com',
+		display: 'page',
+		scopes: ['userinfo.email'],
 	},
 	/*
 	|--------------------------------------------------------------------------
