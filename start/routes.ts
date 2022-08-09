@@ -69,6 +69,7 @@ Route.get('github/callback', async ({ ally, auth, view  }) => {
    * a new one
    */
   const user = await User.firstOrCreate({
+    // @ts-ignore
     email: githubUser.email,
   }, {
     name: githubUser.name,
@@ -100,6 +101,7 @@ Route.get('google/callback', async ({ ally, auth, view  }) => {
    * a new one
    */
   const user = await User.firstOrCreate({
+    // @ts-ignore
     email: googleUser.email,
   }, {
     name: googleUser.name,
